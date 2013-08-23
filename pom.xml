@@ -4,7 +4,7 @@
 
     <groupId>mesosphere</groupId>
     <artifactId>marathon</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
 
     <properties>
         <encoding>UTF-8</encoding>
@@ -126,6 +126,15 @@
                 <version>4.8.0.RELEASE</version>
             </extension>
         </extensions>
+        <resources>
+          <resource>
+            <targetPath>bin</targetPath>
+            <directory>bin</directory>
+          </resource>
+          <resource>
+            <directory>src/main/resources</directory>
+          </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

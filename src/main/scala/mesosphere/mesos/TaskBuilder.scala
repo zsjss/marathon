@@ -6,6 +6,7 @@ import scala.collection._
 import scala.collection.JavaConverters._
 import mesosphere.marathon.api.v1.AppDefinition
 import org.apache.mesos.Protos.Value.Ranges
+import mesosphere.marathon.executor.MarathonExecutor
 
 
 /**
@@ -13,6 +14,7 @@ import org.apache.mesos.Protos.Value.Ranges
  */
 
 class TaskBuilder(app: AppDefinition, newTaskId: String => TaskID) {
+
 
   def buildIfMatches(offer: Offer): Option[TaskInfo] = {
     if (!offerMatches(offer)) {
@@ -22,11 +24,14 @@ class TaskBuilder(app: AppDefinition, newTaskId: String => TaskID) {
     TaskBuilder.getPort(offer).map(port => {
       val taskId = newTaskId(app.id)
 
+      app.port = port
+
       TaskInfo.newBuilder
         .setName(taskId.getValue)
         .setTaskId(taskId)
         .setSlaveId(offer.getSlaveId)
-        .setCommand(TaskBuilder.commandInfo(app, Some(port)))
+        .setData(app.toProto.toByteString)
+        .setExecutor(MarathonExecutor.info)
         .addResources(TaskBuilder.scalarResource(TaskBuilder.cpusResourceName, app.cpus))
         .addResources(TaskBuilder.scalarResource(TaskBuilder.memResourceName, app.mem))
         .addResources(portsResource(port, port))
@@ -78,7 +83,7 @@ object TaskBuilder {
       .build
   }
 
-  def commandInfo(app: AppDefinition, portOption: Option[Int]) = {
+  def commandInfo(app: AppDefinition, portOption: Option[Int]): CommandInfo = {
     val envMap = portOption match {
       case Some(port) => app.env + ("PORT" -> port.toString)
       case None => app.env

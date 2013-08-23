@@ -11,6 +11,7 @@ import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext
 import com.google.common.collect.Lists
 import javax.inject.Inject
+import java.util
 
 
 /**
@@ -45,11 +46,11 @@ class MarathonScheduler @Inject()(
       if (app != null) {
         newTask(app, offer) match {
           case Some(task) => {
-            val taskInfos = Lists.newArrayList(task)
+            val taskInfos: util.ArrayList[TaskInfo] = Lists.newArrayList(task)
             log.fine("Launching tasks: " + taskInfos)
-
             val port = TaskBuilder.getPort(offer).get
-            val marathonTask = MarathonTask(task.getTaskId.getValue, offer.getHostname, port)
+            val marathonTask =
+              MarathonTask(task.getTaskId.getValue, offer.getHostname, port)
             taskTracker.starting(app.id, marathonTask)
             driver.launchTasks(offer.getId, taskInfos)
           }

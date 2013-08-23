@@ -25,7 +25,8 @@ class AppDefinition extends MarathonState[Protos.ServiceDefinition] {
   var port: Int = 0
 
   def toProto: Protos.ServiceDefinition = {
-    val commandInfo = TaskBuilder.commandInfo(this, None)
+    val somePort = if (port == 0) None else Some(port)
+    val commandInfo = TaskBuilder.commandInfo(this, somePort)
     val cpusResource = TaskBuilder.scalarResource(AppDefinition.CPUS, cpus)
     val memResource = TaskBuilder.scalarResource(AppDefinition.MEM, mem)
 
