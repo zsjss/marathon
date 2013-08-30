@@ -25,8 +25,9 @@ class AppDefinition extends MarathonState[Protos.ServiceDefinition] {
   var cpus: Double = 1.0
   var mem: Double = 128.0
 
-  //TODO
+  //TODO: Wire into UI & REST Endpoint
   var constraints: Set[(String, Int, Option[String])] = Set()
+
 
   var uris: Seq[String] = Seq()
   // Port gets assigned by Marathon

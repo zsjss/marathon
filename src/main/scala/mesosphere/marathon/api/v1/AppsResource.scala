@@ -11,6 +11,7 @@ import mesosphere.marathon.event.{EventModule, ApiPostEvent}
 import javax.servlet.http.HttpServletRequest
 import mesosphere.marathon.event.http.HttpCallbackEventSubscriber
 import mesosphere.marathon.tasks.TaskTracker
+import mesosphere.marathon.Protos.Constraint
 
 /**
  * @author Tobi Knaup
@@ -47,12 +48,17 @@ class AppsResource @Inject()(
   }
 
   @POST
-  @Path("scale")
-  @Timed
   def scale(@Context req: HttpServletRequest, app: AppDefinition): Response = {
     maybePostEvent(req, app)
     service.scaleApp(app)
     Response.noContent.build
+  }
+
+  @GET
+  @Path("list")
+  @Timed
+  def get(@PathParam("id") id: String): Response = {
+    Response.ok(service.listApps()).build()
   }
 
   @GET
